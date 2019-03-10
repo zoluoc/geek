@@ -1,0 +1,26 @@
+server:
+  port: 8040
+spring:
+  application:
+    name: geek-zuul
+  zipkin:
+    base-url: http://localhost:8050
+    sleuth:
+      sampler:
+        percentage: 1.0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://peer1:8761/eureka/,http://peer2:8762/eureka/,http://peer3:8763/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
