@@ -6,13 +6,12 @@ spring:
 eureka:
   client:
     service-url:
-      # \u6307\u5B9Aeureka server\u901A\u4FE1\u5730\u5740\uFF0C\u6CE8\u610F/eureka/\u5C0F\u5C3E\u5DF4\u4E0D\u80FD\u5C11
+      # 指定eureka server通信地址，注意/eureka/小尾巴不能少
       defaultZone: http://peer1:8761/eureka/,http://peer2:8762/eureka/,http://peer3:8763/eureka/
   instance:
-    # \u662F\u5426\u6CE8\u518CIP\u5230eureka server\uFF0C\u5982\u4E0D\u6307\u5B9A\u6216\u8BBE\u4E3Afalse\uFF0C\u90A3\u5C31\u4F1A\u6CE8\u518C\u4E3B\u673A\u540D\u5230eureka server
+    # 是否注册IP到eureka server，如不指定或设为false，那就会注册主机名到eureka server
     prefer-ip-address: true
 
-#zipkin\u542F\u52A8\u62A5\u9519\u65E0\u6CD5\u8BBF\u95EE\u7684\u89E3\u51B3\u65B9\u6CD5
 management:
   metrics:
     web:
