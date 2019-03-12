@@ -1,6 +1,7 @@
 package com.corkercode.geek.common.response;
 
 import com.corkercode.geek.common.enums.ErrorCodeEnum;
+import com.corkercode.geek.common.util.AbstractResponseUtil;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import org.apache.tomcat.util.http.ResponseUtil;
@@ -93,46 +94,10 @@ public class ApiResponse<T> implements Serializable {
      */
     public static ApiResponse failure(ErrorCodeEnum errorCodeEnum, Exception exception) {
 
-        return exceptionMsg(errorCodeEnum, exception);
+        return AbstractResponseUtil.exceptionMsg(ApiResponse.builder().msg(errorCodeEnum.msg()), exception)
+                .time(LocalDateTime.now())
+                .status(errorCodeEnum.httpCode())
+                .build();
 
-    }
-
-    private static ApiResponse exceptionMsg(ErrorCodeEnum errorCodeEnum, Exception exception) {
-        if (exception instanceof MethodArgumentNotValidException) {
-            final String[] msg = {""};
-            StringBuilder builder = new StringBuilder("校验失败:");
-            List<ObjectError> allErrors = ((MethodArgumentNotValidException) exception).getBindingResult().getAllErrors();
-            allErrors.stream().findFirst().ifPresent(error -> {
-                builder.append(((FieldError) error).getField()).append("字段规则为").append(error.getDefaultMessage());
-                msg[0] = error.getDefaultMessage();
-            });
-            return ApiResponse.<String>builder().status(errorCodeEnum.httpCode()).msg(msg.toString()).result(builder.toString()).time(LocalDateTime.now()).build();
-        } else if (exception instanceof MissingServletRequestParameterException) {
-            StringBuilder builder = new StringBuilder("参数字段");
-            MissingServletRequestParameterException ex = (MissingServletRequestParameterException) exception;
-            builder.append(ex.getParameterName());
-            builder.append("校验不通过");
-            return ApiResponse.<String>builder().status(errorCodeEnum.httpCode()).msg(ex.getMessage()).result(builder.toString()).time(LocalDateTime.now()).build();
-        } else if (exception instanceof MissingPathVariableException) {
-            StringBuilder builder = new StringBuilder("路径字段");
-            MissingPathVariableException ex = (MissingPathVariableException) exception;
-            builder.append(ex.getVariableName());
-            builder.append("校验不通过");
-            return ApiResponse.<String>builder().status(errorCodeEnum.httpCode()).msg(ex.getMessage()).result(builder.toString()).time(LocalDateTime.now()).build();
-        } else if (exception instanceof ConstraintViolationException) {
-            ApiResponse<String> apiResponse = null;
-            StringBuilder builder = new StringBuilder("方法.参数字段");
-            ConstraintViolationException ex = (ConstraintViolationException) exception;
-            Optional<ConstraintViolation<?>> first = ex.getConstraintViolations().stream().findFirst();
-            if (first.isPresent()) {
-                ConstraintViolation<?> constraintViolation = first.get();
-                builder.append(constraintViolation.getPropertyPath().toString());
-                builder.append("校验不通过");
-                apiResponse = ApiResponse.<String>builder().status(errorCodeEnum.httpCode()).msg(constraintViolation.getMessage()).result(builder.toString()).time(LocalDateTime.now()).build();
-            }
-            return apiResponse;
-        } else {
-            return ApiResponse.<String>builder().status(ErrorCodeEnum.INTERNAL_SERVER_ERROR.httpCode()).msg(ErrorCodeEnum.INTERNAL_SERVER_ERROR.msg()).time(LocalDateTime.now()).build();
-        }
     }
 }

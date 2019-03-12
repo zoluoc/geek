@@ -1,7 +1,6 @@
 package com.corkercode.geek.common.exception;
 
 import com.corkercode.geek.common.enums.ErrorCodeEnum;
-import com.corkercode.geek.common.response.ApiResponse;
 import com.corkercode.geek.common.util.AbstractResponseUtil;
 import com.fasterxml.jackson.core.JsonParseException;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +32,6 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * <p>
@@ -122,7 +119,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
         if (response.getStatus() < HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             log.info("Info: doResolveInfo {}", ex.getMessage());
         } else {
-            log.warn("Warn: doResolveException {}", getStackTraceAsString(ex));
+            log.warn("Warn: doResolveException {}", AbstractResponseUtil.getStackTraceAsString(ex));
         }
         return MODEL_VIEW_INSTANCE;
     }
@@ -136,7 +133,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleApi(ApiException ex,
                            HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ex.getErrorCodeEnum());
+        AbstractResponseUtil.sendFail(request, response, ex.getErrorCodeEnum());
 
     }
 
@@ -151,7 +148,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
                                                      HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.METHOD_NOT_ALLOWED, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.METHOD_NOT_ALLOWED, ex);
     }
 
 
@@ -167,7 +164,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpServletRequest request,
                                                  HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.UNSUPPORTED_MEDIA_TYPE, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.UNSUPPORTED_MEDIA_TYPE, ex);
     }
 
     /**
@@ -182,7 +179,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request,
                                                   HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.NOT_ACCEPTABLE, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.NOT_ACCEPTABLE, ex);
     }
 
     /**
@@ -196,7 +193,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleMissingPathVariable(MissingPathVariableException ex, HttpServletRequest request,
                                            HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.INTERNAL_SERVER_ERROR, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.INTERNAL_SERVER_ERROR, ex);
     }
 
     /**
@@ -209,7 +206,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
                                                       HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
     }
 
     /**
@@ -223,7 +220,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleServletRequestBindingException(ServletRequestBindingException ex, HttpServletRequest request,
                                                       HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
     }
 
     /**
@@ -250,7 +247,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      * @param response current HTTP response
      */
     private void handleTypeMismatch(TypeMismatchException ex, HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
     }
 
     /**
@@ -265,9 +262,9 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
     private void handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request,
                                               HttpServletResponse response) {
         if (ex.getCause() instanceof JsonParseException) {
-            sendFail(request, response, ErrorCodeEnum.JSON_FORMAT_ERROR, ex);
+            AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.JSON_FORMAT_ERROR, ex);
         } else {
-            sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+            AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
         }
     }
 
@@ -294,7 +291,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request,
                                                        HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
     }
 
     /**
@@ -306,7 +303,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleMissingServletRequestPartException(MissingServletRequestPartException ex,
                                                           HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
     }
 
     /**
@@ -317,7 +314,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      * @param response current HTTP response
      */
     private void handleBindException(BindException ex, HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
     }
 
     /**
@@ -330,7 +327,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleNoHandlerFoundException(NoHandlerFoundException ex, HttpServletRequest request,
                                                HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.NOT_FOUND, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.NOT_FOUND, ex);
     }
 
     /**
@@ -342,7 +339,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleAsyncRequestTimeoutException(AsyncRequestTimeoutException ex, HttpServletRequest request,
                                                     HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.SERVICE_UNAVAILABLE, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.SERVICE_UNAVAILABLE, ex);
     }
 
     /**
@@ -354,7 +351,7 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     private void handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request,
                                                     HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.BAD_REQUEST, ex);
     }
 
     /**
@@ -365,42 +362,13 @@ public class GeekHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      * @param response current HTTP response
      */
     private void handleException(Exception ex, HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.INTERNAL_SERVER_ERROR, ex);
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.INTERNAL_SERVER_ERROR, ex);
     }
 
     /**
      * Invoked to send a server error. Sets the status to 500 and also sets the request attribute "javax.servlet.error.exception" to the Exception.
      */
     private void sendServerError(Exception ex, HttpServletRequest request, HttpServletResponse response) {
-        sendFail(request, response, ErrorCodeEnum.INTERNAL_SERVER_ERROR, ex);
-    }
-
-    private static String getStackTraceAsString(Throwable throwable) {
-        StringWriter stringWriter = new StringWriter();
-        throwable.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
-    }
-
-    /**
-     * 发送错误信息
-     *
-     * @param request  request
-     * @param response response
-     * @param codeEnum codeEnum
-     */
-    private void sendFail(HttpServletRequest request, HttpServletResponse response, ErrorCodeEnum codeEnum) {
-        sendFail(request, response, codeEnum, null);
-    }
-
-    /**
-     * 发送错误信息
-     *
-     * @param request  request
-     * @param response response
-     * @param codeEnum codeEnum
-     */
-    private void sendFail(HttpServletRequest request, HttpServletResponse response, ErrorCodeEnum codeEnum,
-                          Exception exception) {
-        AbstractResponseUtil.writeValAsJson(request, response, codeEnum, ApiResponse.failure(codeEnum, exception));
+        AbstractResponseUtil.sendFail(request, response, ErrorCodeEnum.INTERNAL_SERVER_ERROR, ex);
     }
 }
